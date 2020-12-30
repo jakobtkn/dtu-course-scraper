@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import re
+
+courseNumRegex = re.compile(r'course/([^>]+)"') # Rewrote numregex to be more consistent. Now also works for KU courses.
 
 global session
 session = None
@@ -26,9 +29,12 @@ class Course:
         if self.html == None:
             fetch_html()
 
+        # In case of multiple recommended prerequistes seperated by /. This method chooses the first one.
         label = self.html.find("label", text = 'Anbefalede forudsætninger')
         if label == None: return
-        self.rec_reqs = label.next_element.next_element.findAll('a',href=True)
+        temp = label.next_element.next_element
+        temp = re.sub(r'/<[^>]+>.','',str(temp))
+        self.rec_reqs = courseNumRegex.findall(str(temp))
 
     def get_obl_reqs(self):
         if self.html == None:
@@ -36,7 +42,20 @@ class Course:
 
         label = self.html.find("label", text = 'Obligatoriske forudsætninger')
         if label == None: return
-        self.obl_reqs = label.next_element.next_element.findAll('a',href=True)
-    
+        templ = label.next_element.next_element.findAll('a',href=True)
+        #Runs over the the links and matches them with reguler expressions, so only the course number is added to the list
+        for item in templ:
+            tempstr = courseNumRegex.findall(str(item))
+            self.obl_reqs.append((tempstr[0]))
+            
     def get_blocked(self):
-        return
+        if self.html == None:
+            fetch_html()
+
+        label = self.html.find("label", text = 'Pointspærring')
+        if label == None: return
+        templ = label.next_element.next_element.findAll('a',href=True)
+        
+        for item in templ:
+            tempstr = courseNumRegex.findall(str(item))
+            self.blocks.append((tempstr[0]))

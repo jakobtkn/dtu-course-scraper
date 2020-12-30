@@ -3,12 +3,15 @@ import networkx as nx
 import pickle
 import sys
 from course import Course
+from progressbar import ProgressBar
 
 sys.setrecursionlimit(0x100000) # Ran into problemings saving list with pickle
 
 courseDict = {}
 f = open('list_of_course_numbers.txt','r')
-n = 100
+n = 1739
+pbar = ProgressBar()
+
 
 print('Reading course numbers')
 for i in range(n):
@@ -16,7 +19,7 @@ for i in range(n):
     courseDict.update({ courseId : Course(courseId)})
 
 print('Fetching html from kurser.dtu.dk')
-for course in courseDict.values():
+for course in pbar(courseDict.values()):
     course.fetch_html()
 
 print('Extracting relevant info')
