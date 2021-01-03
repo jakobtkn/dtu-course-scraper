@@ -1,7 +1,7 @@
-import requests
 import time
 from threading import Thread, Lock
 import networkx as nx
+<<<<<<< HEAD
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
@@ -85,8 +85,17 @@ def worker(t_id,snip):
 	
 
 
+=======
+import pickle
+import sys
+from course import Course
+from progressbar import ProgressBar
+
+sys.setrecursionlimit(0x100000) # Ran into problemings saving list with pickle
+>>>>>>> rewrite
 
 f = open('list_of_course_numbers.txt','r')
+<<<<<<< HEAD
 #needs to be devisible with nt
 n = 1600
 
@@ -180,3 +189,30 @@ plt.show()
 #         print (soup)
 
 # close(f)
+=======
+n = 1700
+pbar = ProgressBar()
+
+
+print('Reading course numbers')
+for i in range(n):
+    courseId = f.readline().rstrip('\n')
+    courseDict.update({ courseId : Course(courseId)})
+
+print('Fetching html from kurser.dtu.dk')
+for course in pbar(courseDict.values()):
+    course.fetch_html()
+
+print('Extracting relevant info')
+for course in courseDict.values():
+    course.get_obl_reqs()
+    course.get_rec_reqs()
+    course.get_blocked()
+    course.get_name()
+    course.get_department_id()
+    course.html = []
+    
+with open('course_dictionary.pickle', 'wb') as handle:
+    pickle.dump(courseDict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+>>>>>>> rewrite
