@@ -8,40 +8,23 @@ from pyvis.network import Network
 with open('course_dictionary.pickle', 'rb') as handle:
     courseDict = pickle.load(handle)
 
-G = nx.Graph()
-nodes = []
+departmentColor = {29 : 'green', 34 : 'orange', 12 : 'cyan', 46 : 'blue', 30 : 'black', 11 : 'gray', 26: 'yellow', 41 : 'dark gray', 25:  'dark blue', 23 : 'brown', 47 : 'purple', 1 :  'red', 31 :  'magenta', 22 : 'purple', 42 : 'purple', 10 : 'purple', 27 : 'green', 62 : 'black', 28 : 'yellow', 88 : 'dark red'}
 node_names = []
-rec_edges = []
-obl_edges = []
-blocks_edges = []
 
-n = 1700
+n = 1739
 courses = list(courseDict.values())[: n+1 ]
-labelDict = {}
-
-for course in courses:
-    # print(course.id)
-    if bool(course.rec_reqs) | bool(course.obl_reqs) | bool(course.blocks):
-        nodes.append(course)
-        labelDict.update({course.id : course.id})
-        for req in course.rec_reqs:
-            rec_edges.append([course.id,req])
-        for req in course.obl_reqs:
-            obl_edges.append([course.id,req])
-        for req in course.blocks:
-            blocks_edges.append([course.id,req])
-
-G.add_nodes_from(node_names, label = node_names)
-G.add_edges_from(rec_edges, color = 'black')
-G.add_edges_from(obl_edges, color = 'b')
-G.add_edges_from(blocks_edges, color = 'r')
-
-edges = G.edges()
-colors = [G[u][v]['color'] for u,v in edges]
-
-#nx.draw_kamada_kawai(G,node_size = 10, edge_color = colors, labels = labelDict, with_labels = True)
-#plt.savefig('graph.png', dpi = 900)
-
 nt = Network("1080px", "1920px")
-nt.from_nx(G)
+
+filtered = list(filter(lambda x: x.department_id == 1, courses))
+
+for course in filtered:
+    nt.add_node(course.id, label = course.id, title = course.name, physics = True, color = departmentColor[course.department_id])
+    node_names.append(course.id)
+    for target in list(set(course.rec_reqs) & set(node_names)):
+            nt.add_edge(target,course.id, color = 'black', arrows = 'middle')
+    for target in list(set(course.obl_reqs) & set(node_names)):
+            nt.add_edge(target,course.id, color = 'blue', arrows = 'middle')
+    for target in list(set(course.blocks) & set(node_names)):
+            nt.add_edge(target,course.id, color = 'red')
+
 nt.show("nx.html")
