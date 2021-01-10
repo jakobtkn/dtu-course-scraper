@@ -15,16 +15,17 @@ n = 1739
 courses = list(courseDict.values())[: n+1 ]
 nt = Network("1080px", "1920px")
 
+# Change filter to get a different selection of courses. Here the graph is limited to courses from DTU Compute.
 filtered = list(filter(lambda x: x.department_id == 1, courses))
 
 for course in filtered:
-    nt.add_node(course.id, label = course.id, title = course.name, physics = True, color = departmentColor[course.department_id])
+    nt.add_node(course.id, label = course.id, title = course.course_name, physics = True, color = departmentColor[course.department_id])
     node_names.append(course.id)
-    for target in list(set(course.rec_reqs) & set(node_names)):
+    for target in list(set(course.recommended) & set(node_names)):
             nt.add_edge(target,course.id, color = 'black', arrows = 'middle')
-    for target in list(set(course.obl_reqs) & set(node_names)):
+    for target in list(set(course.obligatory) & set(node_names)):
             nt.add_edge(target,course.id, color = 'blue', arrows = 'middle')
-    for target in list(set(course.blocks) & set(node_names)):
+    for target in list(set(course.blocked) & set(node_names)):
             nt.add_edge(target,course.id, color = 'red')
 
 nt.show("nx.html")

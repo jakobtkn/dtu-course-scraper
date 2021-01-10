@@ -12,14 +12,14 @@ session = None
 class Course:
     def __init__(self,id):
         self.id = id
-        self.rec_reqs = []
-        self.obl_reqs = []
-        self.blocks = []
+        self.recommended = []
+        self.obligatory = []
+        self.blocked = []
         self.name = []
         self.department = None
         self.html = None
 
-    def get_url(self):
+    def url(self):
         return('http://kurser.dtu.dk/course/' + str(self.id))
 
     def fetch_html(self):
@@ -27,10 +27,10 @@ class Course:
         if session == None:
             session = requests.Session()
             session.get('http://kurser.dtu.dk', allow_redirects=False)
-        resp = session.get(self.get_url())
+        resp = session.get(self.url())
         self.html = BeautifulSoup(resp.content,'html.parser')
 
-    def get_rec_reqs(self):
+    def get_recommended(self):
         if self.html == None:
             self.fetch_html()
 
@@ -39,9 +39,9 @@ class Course:
         if label == None: return
         temp = label.next_element.next_element
         temp = re.sub(r'/<[^>]+>.','',str(temp))
-        self.rec_reqs = courseNumRegex.findall(str(temp))
+        self.recommended = courseNumRegex.findall(str(temp))
 
-    def get_obl_reqs(self):
+    def get_obligatory(self):
         if self.html == None:
             self.fetch_html()
 
@@ -51,7 +51,7 @@ class Course:
         #Runs over the the links and matches them with reguler expressions, so only the course number  'Is added to the list
         for item in templ:
             tempstr = courseNumRegex.findall(str(item))
-            self.obl_reqs.append((tempstr[0]))
+            self.obligatory.append((tempstr[0]))
             
     def get_blocked(self):
         if self.html == None:
@@ -63,9 +63,9 @@ class Course:
         
         for item in templ:
             tempstr = courseNumRegex.findall(str(item))
-            self.blocks.append((tempstr[0]))
+            self.blocked.append((tempstr[0]))
             
-    def get_name(self):
+    def get_course_name(self):
         if self.html == None:
             self.fetch_html()
             
