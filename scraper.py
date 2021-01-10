@@ -15,7 +15,7 @@ for i in range(n):
     courseDict.update({ courseId : Course(courseId)})
 
 print('Fetching html from kurser.dtu.dk')
-for course in ProgressBar((courseDict.values())):
+for course in ProgressBar()((courseDict.values())):
     course.fetch_html()
     course.get_obligatory()
     course.get_recommended()
