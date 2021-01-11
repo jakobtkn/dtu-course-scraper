@@ -65,7 +65,7 @@ class Course:
             tempstr = courseNumRegex.findall(str(item))
             self.blocked.append((tempstr[0]))
             
-    def get_course_name(self):
+    def get_name(self):
         if self.html == None:
             self.fetch_html()
             

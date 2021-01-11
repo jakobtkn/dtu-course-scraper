@@ -20,7 +20,7 @@ for course in ProgressBar()((courseDict.values())):
     course.get_obligatory()
     course.get_recommended()
     course.get_blocked()
-    course.get_course_name()
+    course.get_name()
     course.get_department_id()
     course.html = [] # Deletes HTML now that we have extracted relevant info
     

@@ -19,7 +19,7 @@ nt = Network("1080px", "1920px")
 filtered = list(filter(lambda x: x.department_id == 1, courses))
 
 for course in filtered:
-    nt.add_node(course.id, label = course.id, title = course.course_name, physics = True, color = departmentColor[course.department_id])
+    nt.add_node(course.id, label = course.id, title = course.name, physics = True, color = departmentColor[course.department_id])
     node_names.append(course.id)
     for target in list(set(course.recommended) & set(node_names)):
             nt.add_edge(target,course.id, color = 'black', arrows = 'middle')
